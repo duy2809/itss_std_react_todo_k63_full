@@ -1,6 +1,6 @@
-import firebase from 'firebase/compat/app';
-import 'firebase/compat/auth';
-import 'firebase/compat/firestore';
+import firebase from "firebase/compat/app";
+import "firebase/compat/auth";
+import "firebase/compat/firestore";
 
 const firebaseConfig = {
   apiKey: "AIzaSyBzMVolHVXS9j4ecPlQTdCWTaP7A8uWhvY",
@@ -8,7 +8,7 @@ const firebaseConfig = {
   projectId: "itss-k63",
   storageBucket: "itss-k63.appspot.com",
   messagingSenderId: "497670202578",
-  appId: "1:497670202578:web:2b7a5dd5b680d04bedb90b"
+  appId: "1:497670202578:web:2b7a5dd5b680d04bedb90b",
 };
 
 firebase.initializeApp(firebaseConfig);
@@ -54,4 +54,27 @@ export const clearFirebaseItem = async (item) => {
     .catch(function (err) {
       console.log(err);
     });
+};
+
+export const uiConfig = {
+  signInFlow: "popup",
+  signInSuccessUrl: "/",
+  signInOptions: [firebase.auth.GoogleAuthProvider.PROVIDER_ID],
+};
+
+export const storeUserInfo = async (user) => {
+  const { uid } = user;
+  const userDoc = await db.collection("users").doc(uid).get();
+  if (!userDoc.exists) {
+    await db.collection("users").doc(uid).set({ name: user.displayName });
+    return {
+      name: user.displayName,
+      id: uid,
+    };
+  } else {
+    return {
+      id: uid,
+      ...userDoc.data(),
+    };
+  }
 };
